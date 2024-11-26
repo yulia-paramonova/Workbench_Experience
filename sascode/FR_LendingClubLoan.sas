@@ -36,13 +36,14 @@
 * options nosource nosource2 nomprint nomlogic nosymbolgen;
 ods graphics on;
 
+%let project_folder = /workspaces/workspace;
 
 *****************************************************;
 ** attribuer des librefs et identifier la bibliothèque de formats **;
 *****************************************************;
-libname Lend '/workspaces/myfolder/Workbench_Experience/sasdata';
+libname Lend "&project_folder./Workbench_Experience/sasdata";
 run;
-libname LendFMT '/workspaces/myfolder/Workbench_Experience/formats';
+libname LendFMT "&project_folder./Workbench_Experience/formats";
 run;
 options FMTSEARCH=(LendFMT);
 
@@ -56,7 +57,7 @@ options FMTSEARCH=(LendFMT);
 ********************************************************************************;  
 %let WBDataLib  = Lend;                * libref pour les données workbench             *;
 %let inputData  = LCLoanData;          * table d'entrée                          *;
-%let inputFile  = %str('/workspaces/myfolder/Workbench_Experience/inputData/lendingClubLoanData.csv');
+%let inputFile  = %str("&project_folder./Workbench_Experience/inputData/lendingClubLoanData.csv");
 
 ********************************************************************************;
 ** Pull the .csv file into a SAS data set                                     **;
@@ -467,7 +468,7 @@ title;
 ** RANDOM FOREST: Enregistrer le Analytic Store                                 **;
 ****************************************************************************;
 proc astore;
-    download rstore=forestAstore store="/workspaces/myfolder/Workbench_Experience/astores/WB_forest.sasast";
+    download rstore=forestAstore store="/&project_folder./Workbench_Experience/astores/WB_forest.sasast";
 run;
 
 ****************************************************************************;
@@ -491,7 +492,7 @@ title;
 ** GBOOST: Enregistrer le Analytic Store                                        **;
 ****************************************************************************;
 proc astore;
-    download rstore=gboostAstore store="/workspaces/myfolder/Workbench_Experience/astores/WB_gboost.sasast";
+    download rstore=gboostAstore store="/&project_folder./Workbench_Experience/astores/WB_gboost.sasast";
 run;
 
 *************************************************;

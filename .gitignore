@@ -3,3 +3,4 @@
 *.sasast
 *.parquet
 credentials.*
+*.pkl

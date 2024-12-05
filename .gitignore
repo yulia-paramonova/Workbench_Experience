@@ -1,6 +1,3 @@
-*.sas7bdat
-*.sas7bcat
-*.sasast
 *.parquet
 credentials.*
 *.pkl

@@ -36,7 +36,8 @@
 * options nosource nosource2 nomprint nomlogic nosymbolgen;
 ods graphics on;
 
-%let project_folder = /workspaces/workspace;
+/* %let project_folder = /workspaces/workspace; */
+%let project_folder = /workspaces/myfolder;
 
 *****************************************************;
 ** attribuer des librefs et identifier la bibliothèque de formats **;

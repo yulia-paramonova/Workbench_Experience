@@ -30,7 +30,7 @@ Model Assessment and Comparison:
 Model Comparison for Tree-Based Models
 ******************************************************************************/
 
-/* Combine predictions from all tree models for ROC plotting */
+/* Combine predictions from all the models for ROC plotting */
 data roc_data (keep = &target P_&target.1 source);
     set forestPREDICTED (in=_fs) gboostPREDICTED (in=_gb) ;
     if _gb then source = 'Gradient Boost';
@@ -52,4 +52,11 @@ proc sgplot data=roc_data;
     yaxis label='True Positive Rate';
 run;
 
-proc assess data=roc_data 
+
+title "AUC (using validation data)";
+proc sql;
+  select distinct source, _c_ from roc_data order by _c_ desc;
+quit;
+
+proc datasets library=work kill;
+run; 

@@ -4,14 +4,9 @@
 **                                                                                    **;
 ****************************************************************************************;
 **                                                                                    **;
-**  Lending Club est une entreprise de prêt entre particuliers basée aux États-Unis.  **;
-**  Elle met en relation des personnes cherchant à investir leur argent avec celles   **;
-**  qui souhaitent emprunter. Lorsque des investisseurs placent leur argent via       **;
-**  Lending Club, cet argent est transmis aux emprunteurs. Lorsque les emprunteurs    **;
-**  remboursent leurs prêts, le capital plus les intérêts sont reversés aux           **;
-**  investisseurs. Tout le monde y gagne, car les emprunteurs bénéficient             **;
-**  généralement de taux d'intérêt plus bas, tandis que les investisseurs obtiennent  **;
-**  des rendements plus élevés.                                                       **;
+** En tant que Data Scientist/Analyst récemment embauché chez Goliath National Bank,  **; 
+** votre première mission consiste à développer un modèle de scoring de crédit afin   **;
+** d'évaluer la solvabilité des demandeurs de prêt.                                   **;
 **                                                                                    **;
 **  Notre objectif aujourd'hui est de développer un modèle qui prédit si              **;
 **  l'emprunteur remboursera son prêt. Nous disposons de données historiques qui      **;
@@ -36,15 +31,15 @@
 * options nosource nosource2 nomprint nomlogic nosymbolgen;
 ods graphics on;
 
-/* %let project_folder = /workspaces/workspace; */
-%let project_folder = /workspaces/myfolder;
+/* %let project_folder = /workspaces/workspace/Workbench_Experience; */
+%let project_folder = /workspaces/myfolder/Workbench_Experience;
 
-*****************************************************;
+********************************************************************;
 ** attribuer des librefs et identifier la bibliothèque de formats **;
-*****************************************************;
-libname Lend "&project_folder./Workbench_Experience/sasdata";
+********************************************************************;
+libname Lend "&project_folder./sasdata";
 run;
-libname LendFMT "&project_folder./Workbench_Experience/formats";
+libname LendFMT "&project_folder./formats";
 run;
 options FMTSEARCH=(LendFMT);
 
@@ -53,12 +48,12 @@ options FMTSEARCH=(LendFMT);
 **   ÉTAPE 1 : CHARGER les données             **;
 **                                             **;
 *************************************************;
-********************************************************************************;  
+********************************************************************************************;  
 ** Attribuer des variables macro pour le libref, le fichier CSV, et le jeu de données SAS **;  
-********************************************************************************;  
+********************************************************************************************;  
 %let WBDataLib  = Lend;                * libref pour les données workbench             *;
 %let inputData  = LCLoanData;          * table d'entrée                          *;
-%let inputFile  = %str("&project_folder./Workbench_Experience/inputData/lendingClubLoanData.csv");
+%let inputFile  = %str("&project_folder./inputData/lendingClubLoanData.csv");
 
 ********************************************************************************;
 ** Pull the .csv file into a SAS data set                                     **;
@@ -103,7 +98,7 @@ data &WBDataLib..&inputData.;
       ;
      Label
             Age               = "Age"
-            CreditPolicy      = "Meets Lending Club Credit Underwriting Policy (0/1)"
+            CreditPolicy      = "Meets Goliath National Bank Credit Underwriting Policy (0/1)"
             CreditLineAge     = "Length of Credit Line in Days"
             DebtIncRatio      = "Debt to Income Ratio"
             Default           = "Loan has not been Repaid"
@@ -138,12 +133,12 @@ proc contents data = &WBDataLib..&inputData.;
   ods exclude enginehost;
 run;
 
-title "Summary Statistics of Lending Club Loan Data";
+title "Summary Statistics of Goliath National Bank Loan Data";
 proc means data = &WBDataLib..&inputData. n nmiss mean min max std;
   ods exclude sortinfo;
 run;
 
-title "First 10 Rows of Lending Club Loan Data";
+title "First 10 Rows of Goliath National Bank Loan Data";
 proc print data=&WBDataLib..&inputData.(obs=10);
 run; 
 title;
@@ -326,7 +321,7 @@ proc freq data = &WBDataLib..&inputData.;
 run;
 
 ************************************************************************;
-** Graphique de la distribution de la variable cible **;
+** Graphique de la distribution de la variable cible                  **;
 ************************************************************************;
 proc freq data=&WBDataLib..&inputData. noprint;
     tables default / out=defaultFREQ;
@@ -344,7 +339,7 @@ proc sgplot data=defaultFREQ;
 run;
 
 ************************************************************************;
-** Analyser la relation entre FICOScore et Default **;
+** Analyser la relation entre FICOScore et Default                    **;
 ************************************************************************;
 proc sort data=&WBDataLib..&inputData.;
     by default;
@@ -363,7 +358,7 @@ title;
 footnote;
 
 ************************************************************************;
-** Graphique de la distribution de la race et du sexe **;
+** Graphique de la distribution de la race et du sexe                 **;
 ************************************************************************;
 proc freq data=&WBDataLib..&inputData. noprint;
     by default;
@@ -388,7 +383,7 @@ footnote;
 
 
 ***************************************************************************;
-** Analyser la relation entre le ratio Dette/Revenu et le Défaut **;
+** Analyser la relation entre le ratio Dette/Revenu et le Défaut         **;
 ***************************************************************************;
 Title 'Debt to Income Ratio across Default';
 footnote italic 'NOTE: There is a higher proportion of Default borrowers with Debt to Income above 16%';
@@ -407,16 +402,16 @@ title;
 **   ÉTAPE 3 : PARTITIONNER les données        **;
 **                                             **;
 *************************************************;
-****************************************************************************;
+*************************************************************************************************;
 ** Créer une partition 60/30/10, enregistrer les données de test dans un jeu de données séparé **;
-****************************************************************************;
+*************************************************************************************************;
 proc partition data=&WBDataLib..&inputData partind samppct=60 samppct2=30;
 	by Default;
 	output out=lendPART;
 	ods exclude OutputCasTables STRAFreq;
 run;
 
-title 'Partitioned Lending Club Data';
+title 'Partitioned Goliath National Bank Data';
 proc freq data=lendPART;
 table _PartIND_;
 run;
@@ -466,10 +461,10 @@ run;
 title;
 
 ****************************************************************************;
-** RANDOM FOREST: Enregistrer le Analytic Store                                 **;
+** RANDOM FOREST: Enregistrer l'Analytic Store                            **;
 ****************************************************************************;
 proc astore;
-    download rstore=forestAstore store="/&project_folder./Workbench_Experience/astores/WB_forest.sasast";
+    download rstore=forestAstore store="&project_folder./astores/WB_forest.sasast";
 run;
 
 ****************************************************************************;
@@ -490,10 +485,10 @@ run;
 title;
 
 ****************************************************************************;
-** GBOOST: Enregistrer le Analytic Store                                        **;
+** GBOOST: Enregistrer l'Analytic Store                                   **;
 ****************************************************************************;
 proc astore;
-    download rstore=gboostAstore store="/&project_folder./Workbench_Experience/astores/WB_gboost.sasast";
+    download rstore=gboostAstore store="&project_folder./astores/WB_gboost.sasast";
 run;
 
 *************************************************;
@@ -669,9 +664,9 @@ proc astore;
 run;
 title;
 
-****************************************************************************;
+**************************************************************************************;
 ** FOREST: Générer un tableau de fréquence pour les classes réelles vs. prédites    **;
-****************************************************************************;
+**************************************************************************************;
 proc freq data=forestPREDICTED noprint;
     tables default*I_Default / out=missclassFOREST;
 run;
@@ -707,9 +702,9 @@ proc astore;
 run;
 title;
 
-****************************************************************************;
-** GBOOST: Générer un tableau de fréquence pour les classes réelles vs. prédites    **;
-****************************************************************************;
+***********************************************************************************;
+** GBOOST: Générer un tableau de fréquence pour les classes réelles vs. prédites **;
+***********************************************************************************;
 proc freq data=gboostPREDICTED noprint;
     tables default*I_Default / out=missclassGBOOST;
 run;
@@ -733,3 +728,37 @@ proc sgplot data=missclassGBOOST;
     title "GRADIENT BOOST: Misclassification Table";
 run;
 
+****************************************************************************;
+** Comparer les modèles                                                   **;
+****************************************************************************;
+%let models = forest gboost;
+%let target = Default;
+
+/* Combine predictions from all the models for ROC plotting */
+data roc_data (keep = &target P_&target.1 source);
+    set forestPREDICTED (in=_fs) gboostPREDICTED (in=_gb) ;
+    if _gb then source = 'Gradient Boost';
+    else if _fs then source = 'Forest';
+run;
+
+/* Calculates ROC information */
+proc assess data = roc_data rocout=roc_data;
+    var P_&target.1;
+    target &target / event="1" level=nominal;
+    by source;
+run;
+
+/* Plot ROC curve for all models */
+proc sgplot data=roc_data;
+    title ;
+    title2 'ROC Curve by Model';
+    series x=_FPR_ y=_Sensitivity_ / group=source markers;
+    xaxis label='False Positive Rate';
+    yaxis label='True Positive Rate';
+run;
+
+
+title "AUC (using validation data)";
+proc sql;
+  select distinct source, _c_ from roc_data order by _c_ desc;
+quit;

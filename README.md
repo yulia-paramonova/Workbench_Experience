@@ -5,3 +5,4 @@ Workbench Experience est une demi-journée dédiée à la découverte des foncti
 
 [Questionnaire](https://forms.office.com/r/6x3m6j8NJF)
 
+  `git clone https://github.com/yulia-paramonova/Workbench_Experience.git`

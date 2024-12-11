@@ -1,3 +1,6 @@
 *.parquet
 credentials.*
 *.pkl
+*.sasast
+*.pem
+*token.txt

@@ -10,3 +10,5 @@ Workbench Experience est une demi-journée dédiée à la découverte des foncti
   `cd Workbench_Experience/`
   
   `pip install -r requirements.txt`
+
+[CROSS VALIDATION](https://go.documentation.sas.com/doc/en/workbenchcdc/v_001/vwbcasml/vwbcasml_forest_syntax03.htm)
